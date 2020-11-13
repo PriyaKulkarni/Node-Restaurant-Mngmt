@@ -7,21 +7,9 @@ const restaurantSchema = new Schema({
     restaurantName: String,
     userRating: Number,
     budget: Number,
-    city: String,
-    cuisine: [],
-    menu: [
-        {
-            dishName: String,
-            price: String
-        }
-    ],
-    location:
-    {
-        coordinates: {
-            type: [Number],
-            required: true
-        }
-    }
+    location: String,
+    cuisine: [String],
+    menu: [{ dishName: String, price: Number }]
 });
 
 module.exports = mongoose.model('restaurant', restaurantSchema);
