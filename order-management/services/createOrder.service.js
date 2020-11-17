@@ -38,8 +38,8 @@ exports.createOrder = async (orderData) => {
                 food: orderFoodItems
             }
             console.log(orderDataModel);
-            // let order = new OrderModel(orderDataModel);
-            // return await order.save();
+            let order = new OrderModel(orderDataModel);
+            return await order.save();
         } else {
             throw Error(orderData.restaurantName + " doesn't have " + notFoundItems.join(', ') + " in their menu.");
         }
