@@ -4,6 +4,9 @@ const { responseJson } = require('../helpers/buildResponse');
 const StatusCodes = require('../config/statusCodes');
 const logger = require('../../order-management/config/winston');
 
+require('dotenv').config();
+const amqp = require('amqplib');
+
 exports.validate = (create) => {
     return [
         check('restaurantName').exists(),
@@ -25,6 +28,7 @@ exports.addRestaurant = async (req, res) => {
             return res.json(response);
         }
         const savedRestaurant = await restaurantService.addRestaurant(req.body);
+        messagePublisher(req.body.location);
         response = responseJson(StatusCodes.success.STATUS, StatusCodes.success.CODE, savedRestaurant);
         return res.json(response);
     } catch (error) {
@@ -64,3 +68,11 @@ exports.getRestaurant = async (req, res) => {
     }
 };
 
+async function messagePublisher(city) {
+    const q = 'Add-Restaurant';
+    const connection = await amqp.connect(process.env.CLOUDAMQP_URL);
+    const channel = await connection.createChannel();
+
+    channel.assertQueue(q);
+    channel.sendToQueue(q, Buffer.from(city));
+}
