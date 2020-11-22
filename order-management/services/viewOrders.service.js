@@ -5,8 +5,16 @@ exports.viewOrders = async (params, query) => {
     try {
         const limit = (params && Number(params.limit)) || (query && Number(query.limit)) || 10;
         const skip = (params && Number(params.skip)) || (query && Number(query.skip)) || 0;
-        await OrderModel.find().limit(limit).skip(skip);
+        return await OrderModel.find().limit(limit).skip(skip);
     } catch(error) {
+        throw error;
+    }
+}
+
+exports.viewOrderByOrderID = async (id) => {
+    try {
+        return await OrderModel.findById(id);
+    } catch (error) {
         throw error;
     }
 }

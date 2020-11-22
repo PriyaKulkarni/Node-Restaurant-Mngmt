@@ -7,6 +7,9 @@ const logger = require('winston');
 require("./config/db");
 
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
 
 const port = process.env.PORT || 8000;
 app.use(bodyParser.json());
@@ -17,10 +20,13 @@ app.use(morgan('combined', { stream: logger.stream.write }));
 //API routes
 require("./routes/order.route")(app);
 
-// app.use(function(err, req, res, next) {
-//     logger.error(`${req.method} - ${err.message}  - ${req.originalUrl} - ${req.ip}`);
-//     next(err);
-// });
+app.use(function(err, req, res, next) {
+    logger.error(err.stack);
+    res.status(500).send('Something broke!')
+    next(err);
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(port, () => {
     console.log(`The server is running at http://localhost:${port}/`);

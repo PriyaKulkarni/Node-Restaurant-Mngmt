@@ -8,6 +8,7 @@ module.exports = (app) => {
     //TODO: add Joi validation
     router.post('/placeOrder', createOrderCtrl.validate('create'), createOrderCtrl.createOrder);
     router.get('/getOrders', viewOrdersCtrl.viewOrders);
+    router.get('/getOrderByID/:id', viewOrdersCtrl.viewOrderByOrderID);
     router.get('/getOrdersByRID', viewOrdersCtrl.viewOrdersByRestaurantIDs);
     router.get('/getOrdersByRNames', viewOrdersCtrl.viewOrdersByRestaurantNames);
     // router.put('/order/:orderID', updateOrderCtrl.validate('update'), updateOrderCtrl.updateOrder);

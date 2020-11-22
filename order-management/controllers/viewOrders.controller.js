@@ -16,6 +16,23 @@ exports.viewOrders = async (req, res) => {
     }
 }
 
+exports.viewOrderByOrderID = async (req, res) => {
+    let response = {};
+    try {
+        const order = await viewOrdersService.viewOrderByOrderID(req.params.id);
+        if(!order) {
+            response = responseJson(StatusCodes.notFound.STATUS, StatusCodes.notFound.CODE, "Order not found");
+            return res.json(response);
+        }
+        response = responseJson(StatusCodes.success.STATUS, StatusCodes.success.CODE, order);
+        return res.json(response);
+    } catch(error) {
+        logger.error(error.stack);
+        response = responseJson(StatusCodes.error.STATUS, StatusCodes.error.CODE, error.stack);
+        return res.json(response);
+    }
+}
+
 exports.viewOrdersByRestaurantIDs = async (req, res) => {
     let response = {};
     try {

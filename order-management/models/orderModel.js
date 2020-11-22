@@ -4,14 +4,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const orderSchema = new Schema({
-    restaurantID: Schema.Types.ObjectId,
-    restaurantName: String,
-    orderTotalAmount: Number,
-    city: String,
+    restaurantID: { type: Schema.Types.ObjectId },
+    restaurantName: {
+            type: String,
+            required: true
+        },
+    orderTotalAmount: { type: Number },
+    city: { type: String },
     food: [{
-        dishName: String,
-        quantity: Number,
-        price: Number
+        dishName: { type: String, required: true },
+        quantity: { type: Number, required: true },
+        price: { type: Number }
     }],
     orderStatus: { type: String, default: 'Ordered' },
     createdOn: {
