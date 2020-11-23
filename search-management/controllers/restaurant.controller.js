@@ -27,6 +27,7 @@ exports.addRestaurant = async (req, res) => {
             response = responseJson(StatusCodes.error.STATUS, StatusCodes.error.CODE, errors.array());
             return res.json(response);
         }
+        // console.log(req.body);
         const savedRestaurant = await restaurantService.addRestaurant(req.body);
         messagePublisher(req.body.location);
         response = responseJson(StatusCodes.success.STATUS, StatusCodes.success.CODE, savedRestaurant);
@@ -56,7 +57,7 @@ exports.getRestaurant = async (req, res) => {
     try {
         const restaurant = await restaurantService.getRestaurant(req.params.id);
         if(!restaurant) {
-            response = responseJson(StatusCodes.notFound.STATUS, StatusCodes.notFound.CODE, "Empty List");
+            response = responseJson(StatusCodes.notFound.STATUS, StatusCodes.notFound.CODE, "Restaurant not found");
             return res.json(response);
         }
         response = responseJson(StatusCodes.success.STATUS, StatusCodes.success.CODE, restaurant);

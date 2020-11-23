@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const updateUserService = require('../services/user.service');
+const userService = require('../services/user.service');
 
 router.get(
   '/profile',
@@ -16,6 +16,8 @@ router.get(
   }
 );
 
-router.post('/update', updateUserService.updateUser);
+router.get('/getAllUsers', userService.getAllUsers);
+
+router.post('/update', userService.updateUser);
 
 module.exports = router;

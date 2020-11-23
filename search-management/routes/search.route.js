@@ -1,5 +1,4 @@
 const express = require("express");
-const logger = require("../config/winston");
 const router = express.Router();
 const searchCtrl = require('../controllers/search.controller');
 

@@ -2,6 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const passport = require('passport');
 
+const morgan = require("morgan");
+const { createProxyMiddleware } = require('http-proxy-middleware');
+require('dotenv').config();
+
 // db instance connection
 require("./config/db");
 
@@ -14,6 +18,10 @@ const secureRoute = require('./routes/user.route');
 const app = express();
 
 const port = process.env.PORT || 9000;
+
+// Logging
+app.use(morgan('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -21,31 +29,41 @@ app.use(passport.initialize());
 
 app.use('/', routes);
 
-/**
- * middleware for checking authorization with jwt
- */
-// function authorized(request, response, next) {
-//     passport.authenticate('jwt', { session: false, }, async (error, token) => {
-//         console.log("req"+ request.body);
-//         console.log('authorise', error, token);
-//         if (error || !token) {
-//             response.status(401).json({ message: 'Unauthorized' });
-//         } 
-//         // try {
-//         //     const user = await User.findOne({
-//         //         where: { id: token.id },
-//         //     });
-//         //     request.user = user;
-//         // } catch (error) {
-//         //     next(error);
-//         // }
-//         request.user = token.user;
-//         next();
-//     })(request, response, next);   
-// }
-
 // Plug in the JWT strategy as a middleware so only verified users can access this route.
 app.use('/user', passport.authenticate('jwt', { session: false, }), secureRoute);
+
+// Proxy Middleware
+app.use('/api/placeOrder',
+    passport.authenticate('jwt', { session: false, }),
+    createProxyMiddleware(
+        {
+            target: process.env.ORDER_SERVICE_URL,
+            changeOrigin: true
+        })
+);
+app.use('/api/getOrders', 
+    passport.authenticate('jwt', { session: false, }),
+    createProxyMiddleware(
+        {
+            target: process.env.ORDER_SERVICE_URL,
+            changeOrigin: true
+        })
+);
+app.use('/api/addRestaurant', 
+    passport.authenticate('jwt', { session: false, }),
+    createProxyMiddleware(
+        {
+            target: process.env.SEARCH_SERVICE_URL,
+            changeOrigin: true
+        })
+);
+app.use('/api/restaurants',
+    createProxyMiddleware(
+        {
+            target: process.env.SEARCH_SERVICE_URL,
+            changeOrigin: true
+        })
+);
 
 // Handle errors.
 app.use(function(err, req, res, next) {
